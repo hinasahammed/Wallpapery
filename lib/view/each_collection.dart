@@ -6,19 +6,24 @@ import 'package:wallpapery/repository/images_repository.dart';
 import 'package:wallpapery/view/detail.dart';
 import 'package:wallpapery/viewModel/images_controller.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class EachCollection extends StatefulWidget {
+  final String id;
+  final String title;
+  const EachCollection({
+    super.key,
+    required this.id,
+    required this.title,
+  });
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<EachCollection> createState() => _EachCollectionState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _EachCollectionState extends State<EachCollection> {
   @override
   void initState() {
     super.initState();
-    ImagesRepository().fetchData();
-    ImagesRepository().fetchFeaturedData();
+    ImagesRepository().fetchFeaturedDataDetails(widget.id);
   }
 
   @override
@@ -26,6 +31,9 @@ class _HomeViewState extends State<HomeView> {
     final theme = Theme.of(context);
     final imagesController = Get.put(ImagesController());
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
       body: Obx(() => Column(
             mainAxisAlignment: imagesController.loading.value == true
                 ? MainAxisAlignment.center
@@ -43,7 +51,7 @@ class _HomeViewState extends State<HomeView> {
                           horizontal: 16,
                           vertical: 10,
                         ),
-                        itemCount: imagesController.imagesData.length,
+                        itemCount: imagesController.featuredDataDetails.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -52,16 +60,19 @@ class _HomeViewState extends State<HomeView> {
                           childAspectRatio: .7,
                         ),
                         itemBuilder: (context, index) {
-                          final imageList = imagesController.imagesData[index];
-                          if (imagesController.imagesData.isEmpty) {
+                          final data =
+                              imagesController.featuredDataDetails[index];
+                          if (imagesController.featuredDataDetails.isEmpty) {
                             return const Center(
-                              child: Text('No data found!'),
-                            );
+                                child: CircularProgressIndicator());
                           } else {
                             return InkWell(
                               onTap: () {
-                                Get.to(() => DetailsView(
-                                    imageUrl: imageList['src']['large2x']));
+                                Get.to(
+                                  () => DetailsView(
+                                    imageUrl: data['src']['large'],
+                                  ),
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -73,7 +84,8 @@ class _HomeViewState extends State<HomeView> {
                                   child: CachedNetworkImage(
                                     width: Get.width * .25,
                                     height: Get.height * .13,
-                                    imageUrl: imageList['src']['large'],
+                                    imageUrl: data['src']?['medium'] ??
+                                        'https://i.pinimg.com/564x/60/4f/c7/604fc7ac1a35548f288fabea8bbf8e97.jpg',
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) =>
                                         Shimmer.fromColors(
@@ -97,22 +109,6 @@ class _HomeViewState extends State<HomeView> {
                         },
                       ),
                     ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: theme.colorScheme.primaryContainer,
-              //     shape: BoxShape.circle,
-              //   ),
-              //   child: IconButton(
-              //     onPressed: () {
-              //       ImagesRepository().loadData();
-              //     },
-              //     icon: const Icon(
-              //       Icons.arrow_circle_down,
-              //       size: 30,
-              //     ),
-              //     color: theme.colorScheme.onPrimaryContainer,
-              //   ),
-              // )
             ],
           )),
     );

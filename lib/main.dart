@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallpapery/view/home.dart';
+import 'package:wallpapery/view/hidden_menu.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final theme = ThemeData(
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Wallpapery',
       theme: theme,
-      home: const HomeView(),
+      home: const HiddenMenu(),
     );
   }
 }

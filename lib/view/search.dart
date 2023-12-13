@@ -1,36 +1,61 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wallpapery/repository/images_repository.dart';
 import 'package:wallpapery/view/detail.dart';
 import 'package:wallpapery/viewModel/images_controller.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class Search extends StatefulWidget {
+  const Search({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<Search> createState() => _SearchState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _SearchState extends State<Search> {
+  final controller = Get.put(ImagesController());
+
   @override
-  void initState() {
-    super.initState();
-    ImagesRepository().fetchData();
-    ImagesRepository().fetchFeaturedData();
+  void dispose() {
+    super.dispose();
+    controller.search.value.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final imagesController = Get.put(ImagesController());
     return Scaffold(
-      body: Obx(() => Column(
-            mainAxisAlignment: imagesController.loading.value == true
-                ? MainAxisAlignment.center
-                : MainAxisAlignment.start,
+      body: Obx(
+        () => Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 10,
+          ),
+          child: Column(
             children: [
+              TextField(
+                controller: controller.search.value,
+                style: const TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  if (imagesController.search.value.text.isNotEmpty) {
+                    ImagesRepository().fetchsearchData();
+                  }
+                },
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      if (imagesController.search.value.text.isNotEmpty) {
+                        ImagesRepository().fetchsearchData();
+                      }
+                    },
+                    icon: const Icon(Icons.search),
+                  ),
+                ),
+              ),
+              const Gap(20),
               imagesController.loading.value == true
                   ? Center(
                       child: CircularProgressIndicator(
@@ -39,11 +64,7 @@ class _HomeViewState extends State<HomeView> {
                     )
                   : Expanded(
                       child: GridView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        itemCount: imagesController.imagesData.length,
+                        itemCount: imagesController.searchData.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -52,10 +73,15 @@ class _HomeViewState extends State<HomeView> {
                           childAspectRatio: .7,
                         ),
                         itemBuilder: (context, index) {
-                          final imageList = imagesController.imagesData[index];
-                          if (imagesController.imagesData.isEmpty) {
-                            return const Center(
-                              child: Text('No data found!'),
+                          var imageList = imagesController.searchData[index];
+                          if (imagesController.searchData[0].isEmpty) {
+                            return Center(
+                              child: Text(
+                                'Enter the text',
+                                style: theme.textTheme.titleLarge!.copyWith(
+                                  color: theme.colorScheme.onBackground,
+                                ),
+                              ),
                             );
                           } else {
                             return InkWell(
@@ -97,24 +123,10 @@ class _HomeViewState extends State<HomeView> {
                         },
                       ),
                     ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: theme.colorScheme.primaryContainer,
-              //     shape: BoxShape.circle,
-              //   ),
-              //   child: IconButton(
-              //     onPressed: () {
-              //       ImagesRepository().loadData();
-              //     },
-              //     icon: const Icon(
-              //       Icons.arrow_circle_down,
-              //       size: 30,
-              //     ),
-              //     color: theme.colorScheme.onPrimaryContainer,
-              //   ),
-              // )
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
