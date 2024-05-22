@@ -73,7 +73,7 @@ class _HiddenMenuState extends State<HiddenMenu> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return HiddenDrawerMenu(
-      backgroundColorMenu: theme.colorScheme.background,
+      backgroundColorMenu: theme.colorScheme.surface,
       backgroundColorAppBar: theme.appBarTheme.backgroundColor,
       screens: itens,
       slidePercent: 70.0,

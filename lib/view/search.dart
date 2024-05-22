@@ -59,7 +59,7 @@ class _SearchState extends State<Search> {
               imagesController.loading.value == true
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: theme.colorScheme.onBackground,
+                        color: theme.colorScheme.onSurface,
                       ),
                     )
                   : Expanded(
@@ -79,7 +79,7 @@ class _SearchState extends State<Search> {
                               child: Text(
                                 'Enter the text',
                                 style: theme.textTheme.titleLarge!.copyWith(
-                                  color: theme.colorScheme.onBackground,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
                             );

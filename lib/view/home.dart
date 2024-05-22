@@ -34,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
               imagesController.loading.value == true
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: theme.colorScheme.onBackground,
+                        color: theme.colorScheme.onSurface,
                       ),
                     )
                   : Expanded(

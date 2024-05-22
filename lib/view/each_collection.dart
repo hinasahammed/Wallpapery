@@ -42,7 +42,7 @@ class _EachCollectionState extends State<EachCollection> {
               imagesController.loading.value == true
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: theme.colorScheme.onBackground,
+                        color: theme.colorScheme.onSurface,
                       ),
                     )
                   : Expanded(
